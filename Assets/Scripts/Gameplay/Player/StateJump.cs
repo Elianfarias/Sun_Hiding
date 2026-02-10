@@ -30,6 +30,11 @@ namespace Assets.Scripts.Gameplay.Player
             onGround = playerMovement.IsOnGround();
             bool justJumpedRecently = (Time.time - lastJumpInitiatedTime) < jumpGrace;
 
+            if (System.Math.Abs(playerMovement.GetVelocityX()) > 0.1f)
+                playerController.ChangeAnimatorState((int)PlayerAnimatorEnum.Run);
+            else
+                playerController.ChangeAnimatorState((int)PlayerAnimatorEnum.Idle);
+
             if (onGround && chargeStartTime < 0.1f && !justJumpedRecently)
             {
                 if (System.Math.Abs(playerMovement.GetVelocityX()) > 0.1f)
@@ -38,9 +43,9 @@ namespace Assets.Scripts.Gameplay.Player
                     playerController.SwapStateTo(PlayerAnimatorEnum.Idle);
             }
             else if (Input.GetKey(playerMovement.data.keyCodeLeft))
-                playerMovement.MoveX(-0.7f);
+                playerMovement.MoveX(-1f);
             else if (Input.GetKey(playerMovement.data.keyCodeRight))
-                playerMovement.MoveX(0.7f);
+                playerMovement.MoveX(1f);
 
             if (!onGround)
                 return;
