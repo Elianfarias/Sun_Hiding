@@ -6,6 +6,7 @@ public class UILife : MonoBehaviour
     [SerializeField] private HealthSystem target;
     [SerializeField] private Image barLife;
 
+
     private void Awake()
     {
         target.OnLifeUpdated += HealthSystem_onLifeUpdated;

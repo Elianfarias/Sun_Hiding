@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [Header("VFX")]
     [SerializeField] private GameObject jumpSplash;
+    [SerializeField] private DamageVignette damageVignette;
     [Header("Sound clips")]
     [SerializeField] private AudioClip clipHurt;
     [SerializeField] private AudioClip clipDie;
@@ -60,6 +61,7 @@ public class PlayerController : MonoBehaviour
     {
         if (life < maxLife && !takeDmgMyselft)
         {
+            damageVignette.ShowDamage();
             CombatEvents.RaiseCameraShake(2f, 0.12f, transform.position);
             AudioController.Instance.PlaySoundEffect(clipHurt, priority: 2);
         }
