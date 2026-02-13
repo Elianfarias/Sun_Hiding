@@ -21,6 +21,8 @@ public class UIChargerJump : MonoBehaviour
     private List<GameObject> activeChevrons = new();
     private List<Vector3> originalScales = new();
     private Camera mainCamera;
+    private Vector3 originalScale;
+    private Vector3 targetScale;
 
     private void Awake()
     {
@@ -28,6 +30,12 @@ public class UIChargerJump : MonoBehaviour
         target.OnChargerJump += OnChargerJump;
         target.OnJump += OnJump;
         gameObject.SetActive(false);
+    }
+
+    private void Start()
+    {
+        originalScale = transform.localScale;
+        targetScale = originalScale;
     }
 
     private void OnDestroy()
@@ -39,7 +47,7 @@ public class UIChargerJump : MonoBehaviour
 
     public void OnChargerJump(float currentCharge, float maxCharge)
     {
-        if(currentCharge < 0.2f)
+        if (currentCharge < 0.2f)
         {
             ClearChevrons();
             return;
@@ -51,7 +59,6 @@ public class UIChargerJump : MonoBehaviour
         int chevronsToShow = Mathf.CeilToInt(chargePercent * maxChevrons);
 
         Vector3 mousePos = Input.mousePosition;
-        float playerScreenX = Camera.main.WorldToScreenPoint(transform.position).x;
         Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0;
         Vector3 playerPos = target.transform.position;
@@ -95,15 +102,44 @@ public class UIChargerJump : MonoBehaviour
                 float pulse = 1f + Mathf.Sin(Time.time * pulseSpeed + i * 0.2f) * pulseAmount;
                 Vector3 baseScale = originalScales[i];
                 float finalScale = Mathf.Lerp(1f, pulseMultiplier, (pulse - 1f) / pulseAmount);
-                chevron.transform.localScale = mousePos.x > playerScreenX ? (baseScale * finalScale) : -(baseScale * finalScale);
+
+                if (direction.y > 0f)
+                    chevron.transform.localScale = mousePos.y > mouseWorldPos.y ? (baseScale * finalScale) : -(baseScale * finalScale);
+                else
+                    chevron.transform.localScale = mousePos.x > mouseWorldPos.x ? (baseScale * finalScale) : -(baseScale * finalScale);
+
+
             }
         }
     }
 
     public void OnJump(bool jump)
     {
+        if (jump)
+            OnJump();
+        else
+            OnLand();
+
         gameObject.SetActive(false);
         ClearChevrons();
+    }
+
+    public void OnJump()
+    {
+        targetScale = new Vector3(
+            originalScale.x * (1f - target.data.stretchAmount),  // Más delgado (80% ancho)
+            originalScale.y * (1f + target.data.stretchAmount),  // Más alto (120% alto)
+            originalScale.z
+        );
+    }
+
+    public void OnLand()
+    {
+        targetScale = new Vector3(
+            originalScale.x * (1f + target.data.squashAmount),   // Más ancho (130%)
+            originalScale.y * (1f - target.data.squashAmount),   // Más bajo (70%)
+            originalScale.z
+        );
     }
 
     private void ClearChevrons()
