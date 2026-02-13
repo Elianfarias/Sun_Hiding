@@ -3586,7 +3586,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerMovement: {fileID: 2091483548}
-  playerSpriteRenderer: {fileID: 2091483552}
+  playerSpriteRenderer: {fileID: 1287254436}
   poolSize: 3
   poolParent: {fileID: 705866172}
   afterImageMinDistance: 0.25
@@ -6293,6 +6293,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1270109214}
   m_CullTransparentMesh: 1
+--- !u!212 &1287254436 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3961816275817804970, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
+  m_PrefabInstance: {fileID: 2091483547}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1322602938
 GameObject:
   m_ObjectHideFlags: 0
@@ -13041,62 +13046,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 267611561189076067, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_Name
-      value: Minimap
-      objectReference: {fileID: 0}
-    - target: {fileID: 2014994564902087002, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: maxChevrons
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 2014994564902087002, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: chevronPrefab
-      value: 
-      objectReference: {fileID: 8239918729728097976, guid: be6efbfa9b15cab449f7974be463f4e4, type: 3}
-    - target: {fileID: 2014994564902087002, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: distanceFromPlayer
-      value: 0.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 2218881087095019934, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_PlayOnAwake
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2646346876168799618, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2646346876168799618, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2646346876168799618, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2646346876168799618, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.45
-      objectReference: {fileID: 0}
-    - target: {fileID: 2646346876168799618, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3781623190730007001, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -2413806693520163455, guid: ebe73ca9363db456bacf42c025bb4847, type: 3}
-    - target: {fileID: 3781623190730007001, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_Color.b
-      value: 0.34117648
-      objectReference: {fileID: 0}
-    - target: {fileID: 3781623190730007001, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_Color.g
-      value: 0.227451
-      objectReference: {fileID: 0}
-    - target: {fileID: 3781623190730007001, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-      propertyPath: m_Color.r
-      value: 0.24705884
-      objectReference: {fileID: 0}
     - target: {fileID: 3864790027311255706, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.32
@@ -13158,8 +13107,7 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 523885220599699209, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
@@ -13174,11 +13122,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c713d0d60aa070408e4fe88443ce791, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!212 &2091483552 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 5016606000350389783, guid: 9b4b92e0000085b48af031b82b937825, type: 3}
-  m_PrefabInstance: {fileID: 2091483547}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2094854729 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3745425206386052212, guid: 073f3548705212649af27322e6894dc2, type: 3}

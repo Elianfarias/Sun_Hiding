@@ -42,3 +42,8 @@ MonoBehaviour:
   slowMotionScale: 0.3
   slowMotionDuration: 2
   takeDamageSlowMotion: 5
+  squashAmount: 0.3
+  stretchAmount: 0.2
+  dashSquashY: 0.1
+  dashStretchX: 0.25
+  returnSpeed: 4

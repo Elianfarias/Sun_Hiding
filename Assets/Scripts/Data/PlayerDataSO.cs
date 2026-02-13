@@ -37,4 +37,10 @@ public class PlayerDataSO : ScriptableObject
     public float slowMotionScale = 0.3f;
     public float slowMotionDuration = 2f;
     public int takeDamageSlowMotion = 1;
+    // squash and stretch
+    public float squashAmount = 0.3f;      // Cuánto se aplasta (30%)
+    public float stretchAmount = 0.2f;     // Cuánto se estira (20%)
+    public float dashSquashY = 0.4f;      // Dash se aplasta verticalmente
+    public float dashStretchX = 0.3f;     // Dash se estira horizontalmente
+    public float returnSpeed = 12f;        // Qué tan rápido vuelve a su estado normal
 }

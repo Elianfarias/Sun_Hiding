@@ -21,23 +21,39 @@ namespace Assets.Scripts.Gameplay.Player
         [Header("Sound clips")]
         [SerializeField] private AudioClip clipJump;
         [SerializeField] private AudioClip clipWalk;
+        [Header("References")]
+        [SerializeField] private Transform visualTransform;
 
         private HealthSystem healthSystem;
         private Animator animator;
         private Rigidbody2D rb;
         private bool _isDashing = false;
         private float _lastDashTime = -Mathf.Infinity;
+        private Vector3 baseScale;
 
         private void Awake()
         {
             healthSystem = GetComponent<HealthSystem>();
-            animator = GetComponent<Animator>();
+            animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody2D>();
+        }
+
+        private void Start()
+        {
+            if (visualTransform != null)
+            {
+                baseScale = new Vector3(
+                    Mathf.Abs(visualTransform.localScale.x),
+                    visualTransform.localScale.y,
+                    visualTransform.localScale.z
+                );
+            }
         }
 
         private void FixedUpdate()
         {
-            RotateTowardsMouseScreen();
+            if (!_isDashing)
+                RotateTowardsMouseScreen();
 
             if (Input.GetKey(data.keyCodeDash))
                 TryDash();
@@ -173,26 +189,79 @@ namespace Assets.Scripts.Gameplay.Player
             OnDashCD.Invoke(data.dashCD);
             OnDash.Invoke(data.dashDuration);
 
-            // Ignore enemies
-            GameStateManager.Instance.inmortalMode = true;
-            gameObject.layer = LayerMask.NameToLayer("PlayerDash");
-
+            SetDashState(true);
             rb.velocity = new Vector2(sign * data.dashSpeed, velocity.y);
 
+            // Squash & stretch sequence
+            yield return StartCoroutine(SquashStretchSequence(sign));
+
+            SetDashState(false);
+            _isDashing = false;
+        }
+
+        private IEnumerator SquashStretchSequence(int sign)
+        {
+            // Stretch
+            yield return StartCoroutine(LerpScale(GetStretchScale(sign), 0.1f));
+
+            // Hold
             yield return new WaitForSeconds(data.dashDuration);
 
-            GameStateManager.Instance.inmortalMode = false;
-            gameObject.layer = LayerMask.NameToLayer("Player");
+            // Bounce to normal
+            yield return StartCoroutine(BounceToNormal(sign));
+        }
 
-            _isDashing = false;
+        private void SetDashState(bool isDashing)
+        {
+            GameStateManager.Instance.inmortalMode = isDashing;
+            gameObject.layer = LayerMask.NameToLayer(isDashing ? "PlayerDash" : "Player");
+        }
+
+        private Vector3 GetStretchScale(int sign)
+        {
+            return new Vector3(
+                sign * baseScale.x * (1f + data.dashStretchX),
+                baseScale.y * (1f - data.dashSquashY),
+                baseScale.z
+            );
+        }
+
+        private IEnumerator LerpScale(Vector3 targetScale, float duration)
+        {
+            Vector3 startScale = visualTransform.localScale;
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                visualTransform.localScale = Vector3.Lerp(startScale, targetScale, elapsed / duration);
+                yield return null;
+            }
+
+            visualTransform.localScale = targetScale;
+        }
+
+        private IEnumerator BounceToNormal(int sign)
+        {
+            yield return StartCoroutine(LerpScale(
+                new Vector3(sign * baseScale.x * 0.95f, baseScale.y * 1.05f, baseScale.z),
+                0.15f
+            ));
+
+            yield return StartCoroutine(LerpScale(
+                new Vector3(sign * baseScale.x, baseScale.y, baseScale.z),
+                0.12f
+            ));
         }
 
         private void RotateTowardsMouseScreen()
         {
             Vector3 mousePos = Input.mousePosition;
-            float playerScreenX = Camera.main.WorldToScreenPoint(transform.position).x;
+            float playerScreenX = Camera.main.WorldToScreenPoint(visualTransform.position).x;
             float sign = mousePos.x > playerScreenX ? 1f : -1f;
-            transform.localScale = new Vector3(sign, 1f, 1f);
+            visualTransform.localScale = new Vector3(sign * Mathf.Abs(visualTransform.localScale.x),
+                visualTransform.localScale.y,
+                visualTransform.localScale.z);
         }
 
     }

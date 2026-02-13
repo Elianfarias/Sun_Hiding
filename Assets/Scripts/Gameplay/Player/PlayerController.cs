@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         healthSystem = GetComponent<HealthSystem>();
-        animator = GetComponent<Animator>();
+        animator = GetComponentInChildren<Animator>();
         playerMovement.OnJump += PlayerMovement_onJump;
         healthSystem.OnDie += HealthSystem_onDie;
         healthSystem.OnLifeUpdated += HealthSystem_onLifeUpdated;

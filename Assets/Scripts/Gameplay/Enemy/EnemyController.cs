@@ -84,10 +84,11 @@ public class EnemyController : MonoBehaviour
             PlaySoundEffect(clipHurt, priority: true);
             enemyParticles.Play();
             enemyMovement.StopMovement();
-
-            yield return new WaitForSeconds(data.TimeStun);
+            Time.timeScale = 0f;
+            yield return new WaitForSecondsRealtime(data.TimeStun);
 
             enemyMovement.ResumeMovement();
+            Time.timeScale = 1f;
         }
     }
 

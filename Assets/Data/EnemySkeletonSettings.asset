@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speedMovement: 80
   damage: 40
-  timeStun: 1
+  timeStun: 0.05
   timeMoveSound: 1
