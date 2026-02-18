@@ -5129,6 +5129,7 @@ GameObject:
   - component: {fileID: 2930974411467051865}
   - component: {fileID: 2453936865604218504}
   - component: {fileID: 6212743029886093008}
+  - component: {fileID: 6844089740681710045}
   - component: {fileID: 4187545963778778315}
   - component: {fileID: 482070020001169149}
   m_Layer: 7
@@ -5214,6 +5215,7 @@ MonoBehaviour:
   playerMovement: {fileID: 2930974411467051865}
   spriteRenderer: {fileID: 3961816275817804970}
   jumpSplash: {fileID: 8336258559865167236}
+  damageVignette: {fileID: 0}
   clipHurt: {fileID: 8300000, guid: 98d53895665c5ae4a8b28489d24f925e, type: 3}
   clipDie: {fileID: 8300000, guid: 5fa8f12875bcdee4389c9e701578c9fe, type: 3}
 --- !u!114 &6212743029886093008
@@ -5231,6 +5233,19 @@ MonoBehaviour:
   maxLife: 100
   animator: {fileID: 6566419410292311396}
   rb: {fileID: 4187545963778778315}
+--- !u!114 &6844089740681710045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8165639736019026923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db53c32f6cfe6eb41a769d48def68a23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnOffset: {x: 0, y: 0.9, z: 0}
 --- !u!50 &4187545963778778315
 Rigidbody2D:
   serializedVersion: 4

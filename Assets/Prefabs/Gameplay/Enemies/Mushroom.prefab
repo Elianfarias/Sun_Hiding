@@ -99,6 +99,7 @@ GameObject:
   - component: {fileID: 863018150904644968}
   - component: {fileID: 4034392098202866521}
   - component: {fileID: 2437770111835466711}
+  - component: {fileID: 2046487100676204347}
   - component: {fileID: 7455473892709314861}
   - component: {fileID: 3128818091793467155}
   - component: {fileID: 7949772763153021579}
@@ -232,6 +233,19 @@ MonoBehaviour:
   data: {fileID: 11400000, guid: 31b86b896611ea245ba71068dc830c7a, type: 2}
   patrolA: {fileID: 0}
   patrolB: {fileID: 0}
+--- !u!114 &2046487100676204347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5052761903556541340}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db53c32f6cfe6eb41a769d48def68a23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spawnOffset: {x: 0, y: 0.9, z: 0}
 --- !u!50 &7455473892709314861
 Rigidbody2D:
   serializedVersion: 4
