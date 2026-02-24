@@ -42,7 +42,6 @@ public class HealthSystem : MonoBehaviour
 
             OnLifeUpdated?.Invoke(life, maxLife, takeDmgMyself);
         }
-
     }
 
     public void Heal(int plus)

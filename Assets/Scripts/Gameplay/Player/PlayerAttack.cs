@@ -29,6 +29,20 @@ public class PlayerAttack : MonoBehaviour
 
         if (Input.GetKeyDown(data.slowMotionKey))
             ToggleSlowMotion();
+
+        if (Input.GetKeyDown(data.reloadKey) && shotsSinceExtraDelay > 0)
+        {
+            Reload();
+        }
+    }
+    private void Reload()
+    {
+        float cd = bulletsPool[0].data.baseCooldown;
+        OnReload.Invoke();
+        cd += data.extraReloadDelay;
+        shotsSinceExtraDelay = 0;
+        nextIndex = 0;
+        StartCoroutine(Cooldown(cd));
     }
 
     private void TryFire()

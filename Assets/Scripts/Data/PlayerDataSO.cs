@@ -9,6 +9,7 @@ public class PlayerDataSO : ScriptableObject
     public KeyCode keyCodeRight = KeyCode.D;
     public KeyCode keyCodeDash = KeyCode.LeftShift;
     public KeyCode slowMotionKey = KeyCode.E;
+    public KeyCode reloadKey = KeyCode.R;
     public Bullet bulletPrefab;
     public int speed;
     public int jumpForce;
