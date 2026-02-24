@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-
 namespace Assets.Scripts.Gameplay.Player
 {
     public class StateJump : State
@@ -10,6 +9,9 @@ namespace Assets.Scripts.Gameplay.Player
         protected float chargeStartTime = 0f;
         private float lastJumpInitiatedTime = -Mathf.Infinity;
         private readonly float jumpGrace = 0.12f;
+
+        private float coyoteTimeCounter;
+        private float jumpBufferCounter;
 
         public StateJump(PlayerMovement playerMovement, PlayerController playerController)
         {
@@ -30,6 +32,18 @@ namespace Assets.Scripts.Gameplay.Player
             onGround = playerMovement.IsOnGround();
             bool justJumpedRecently = (Time.time - lastJumpInitiatedTime) < jumpGrace;
 
+            // Coyote time
+            if (onGround)
+                coyoteTimeCounter = playerMovement.data.coyoteTime;
+            else
+                coyoteTimeCounter -= Time.deltaTime;
+
+            // Jump buffer
+            if (Input.GetKeyDown(KeyCode.Space))
+                jumpBufferCounter = playerMovement.data.jumpBufferTime;
+            else
+                jumpBufferCounter -= Time.deltaTime;
+
             if (System.Math.Abs(playerMovement.GetVelocityX()) > 0.1f)
                 playerController.ChangeAnimatorState((int)PlayerAnimatorEnum.Run);
             else
@@ -37,6 +51,13 @@ namespace Assets.Scripts.Gameplay.Player
 
             if (onGround && chargeStartTime < 0.1f && !justJumpedRecently)
             {
+                if (jumpBufferCounter > 0f)
+                {
+                    ExecuteJump(fromBuffer: true);
+                    return;
+                }
+
+                playerMovement.OnGroundInvoke();
                 if (System.Math.Abs(playerMovement.GetVelocityX()) > 0.1f)
                     playerController.SwapStateTo(PlayerAnimatorEnum.Run);
                 else
@@ -47,20 +68,11 @@ namespace Assets.Scripts.Gameplay.Player
             else if (Input.GetKey(playerMovement.data.keyCodeRight))
                 playerMovement.MoveX(0.98f);
 
-            if (!onGround)
+            if (coyoteTimeCounter <= 0f)
                 return;
 
             if (Input.GetKeyUp(KeyCode.Space))
-            {
-                if (currentCharge < playerMovement.data.tapThreshold)
-                    playerMovement.Jump();
-                else
-                    playerMovement.ReleaseCharge(ref currentCharge);
-
-                lastJumpInitiatedTime = Time.time;
-                currentCharge = 0f;
-                chargeStartTime = 0f;
-            }
+                ExecuteJump();
 
             if (Input.GetKey(KeyCode.Space))
                 playerMovement.Charging(ref currentCharge);
@@ -68,7 +80,23 @@ namespace Assets.Scripts.Gameplay.Player
 
         public override void OnExit()
         {
-            playerMovement.OnGroundInvoke();
+        }
+
+        private void ExecuteJump(bool fromBuffer = false)
+        {
+            //if (fromBuffer)
+            //    playerMovement.ResetVelocityY();
+
+            if (currentCharge < playerMovement.data.tapThreshold)
+                playerMovement.Jump();
+            else
+                playerMovement.ReleaseCharge(ref currentCharge);
+
+            lastJumpInitiatedTime = Time.time;
+            currentCharge = 0f;
+            chargeStartTime = 0f;
+            coyoteTimeCounter = 0f;
+            jumpBufferCounter = 0f;
         }
     }
 }

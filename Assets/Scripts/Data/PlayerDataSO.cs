@@ -44,4 +44,11 @@ public class PlayerDataSO : ScriptableObject
     public float dashSquashY = 0.4f;      // Dash se aplasta verticalmente
     public float dashStretchX = 0.3f;     // Dash se estira horizontalmente
     public float returnSpeed = 12f;        // Qué tan rápido vuelve a su estado normal
+    [Header("Jump Feel")]
+    public float coyoteTime = 0.1f;
+    public float jumpBufferTime = 0.15f;
+    public Vector2 offsetCollider = new(0f, -0.15f);
+    public Vector2 sizeCollider = new(0.13f, 0.53f);
+    public Vector2 offsetJumpCollider = new(-0.03f, -0.18f);
+    public Vector2 sizeJumpCollider = new(0.17f, 0.23f);
 }

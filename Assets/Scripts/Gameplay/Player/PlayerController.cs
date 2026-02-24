@@ -4,12 +4,18 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool onJump;
     private HealthSystem healthSystem;
     [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private SpriteRenderer spriteRenderer;
+    [SerializeField] private CapsuleCollider2D capsuleCollider;
+    [SerializeField] private PlayerDataSO playerData;
+
     [Header("VFX")]
-    [SerializeField] private GameObject jumpSplash;
+    [SerializeField] private PlayerDissolveEffect dissolveEffect;
     [SerializeField] private DamageVignette damageVignette;
+    [SerializeField] private SpriteRenderer spriteOnJump;
+    [SerializeField] private GhostTrail trail;
     [Header("Sound clips")]
     [SerializeField] private AudioClip clipHurt;
     [SerializeField] private AudioClip clipDie;
@@ -34,7 +40,7 @@ public class PlayerController : MonoBehaviour
         states.Add(new StateIdle(playerMovement, this));
         states.Add(new StateWalk(playerMovement, this));
         states.Add(new StateJump(playerMovement, this));
-
+        onJump = false;
         SwapStateTo(PlayerAnimatorEnum.Idle);
     }
 
@@ -53,8 +59,24 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerMovement_onJump(bool jump)
     {
+        onJump = jump;
         spriteRenderer.enabled = !jump;
-        jumpSplash.SetActive(jump);
+        spriteOnJump.enabled = jump;
+
+        if (jump)
+        {
+            capsuleCollider.size = playerData.sizeJumpCollider;
+            capsuleCollider.offset = playerData.offsetJumpCollider;
+            dissolveEffect.PlayDissolve();
+            trail.Enable();
+        }
+        else
+        {
+            capsuleCollider.size = playerData.sizeCollider;
+            capsuleCollider.offset = playerData.offsetCollider;
+            dissolveEffect.PlayRestore();
+            trail.Disable();
+        }
     }
 
     private void HealthSystem_onLifeUpdated(int life, int maxLife, bool takeDmgMyselft)

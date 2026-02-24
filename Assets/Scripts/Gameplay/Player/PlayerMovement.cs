@@ -15,14 +15,17 @@ namespace Assets.Scripts.Gameplay.Player
 
         [Header("Player Settings")]
         public PlayerDataSO data;
-        [SerializeField] private ParticleSystem waterSplash;
         [Header("Dash Settings")]
         [SerializeField] private float dashCooldown = 1f;
+        [SerializeField] private PlayerDissolveEffect dissolveEffect;
+        [SerializeField] private GhostTrail trail;
         [Header("Sound clips")]
         [SerializeField] private AudioClip clipJump;
         [SerializeField] private AudioClip clipWalk;
         [Header("References")]
         [SerializeField] private Transform visualTransform;
+        [SerializeField] private Transform visualJumpTransform;
+        [SerializeField] private PlayerController playerController;
 
         private HealthSystem healthSystem;
         private Animator animator;
@@ -147,6 +150,11 @@ namespace Assets.Scripts.Gameplay.Player
             rb.velocity = new Vector2(0, rb.velocityY);
         }
 
+        public void ResetVelocityY()
+        {
+            rb.velocity = new Vector2(rb.velocity.x, 0f);
+        }
+
         public void MoveX(float axisX)
         {
             float currentSpeedAbs = Mathf.Abs(rb.velocityX);
@@ -187,7 +195,7 @@ namespace Assets.Scripts.Gameplay.Player
             int sign = velocity.x > 0 ? 1 : -1;
 
             OnDashCD.Invoke(data.dashCD);
-            OnDash.Invoke(data.dashDuration);
+            //OnDash.Invoke(data.dashDuration);
 
             SetDashState(true);
             rb.velocity = new Vector2(sign * data.dashSpeed, velocity.y);
@@ -202,13 +210,15 @@ namespace Assets.Scripts.Gameplay.Player
         private IEnumerator SquashStretchSequence(int sign)
         {
             // Stretch
-            yield return StartCoroutine(LerpScale(GetStretchScale(sign), 0.1f));
+            dissolveEffect.PlayDissolve(dissolveEffect.dissolveDuration);
+            trail.Enable();
 
             // Hold
             yield return new WaitForSeconds(data.dashDuration);
 
             // Bounce to normal
-            yield return StartCoroutine(BounceToNormal(sign));
+            trail.Disable();
+            dissolveEffect.PlayRestore(dissolveEffect.dissolveDuration);
         }
 
         private void SetDashState(bool isDashing)
@@ -260,6 +270,9 @@ namespace Assets.Scripts.Gameplay.Player
             float playerScreenX = Camera.main.WorldToScreenPoint(visualTransform.position).x;
             float sign = mousePos.x > playerScreenX ? 1f : -1f;
             visualTransform.localScale = new Vector3(sign * Mathf.Abs(visualTransform.localScale.x),
+                visualTransform.localScale.y,
+                visualTransform.localScale.z);
+            visualJumpTransform.localScale = new Vector3(-sign * Mathf.Abs(visualTransform.localScale.x),
                 visualTransform.localScale.y,
                 visualTransform.localScale.z);
         }
