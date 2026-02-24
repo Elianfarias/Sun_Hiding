@@ -9,8 +9,8 @@ public class UIChargerJump : MonoBehaviour
     [Header("Chevron Settings")]
     [SerializeField] private GameObject chevronPrefab;
     [SerializeField] private int maxChevrons = 8;
-    [SerializeField] private float chevronSpacing = 0.4f;
-    [SerializeField] private float distanceFromPlayer = 1f;
+    [SerializeField] private float chevronSpacing = 0.15f; // tiempo entre puntos en segundos
+    [SerializeField] private float distanceFromPlayer = 0.3f; // delay inicial en segundos
 
     [Header("Visual Settings")]
     [SerializeField] private float pulseSpeed = 5f;
@@ -21,12 +21,15 @@ public class UIChargerJump : MonoBehaviour
     private List<GameObject> activeChevrons = new();
     private List<Vector3> originalScales = new();
     private Camera mainCamera;
+    private Rigidbody2D playerRb;
     private Vector3 originalScale;
     private Vector3 targetScale;
 
     private void Awake()
     {
         mainCamera = Camera.main;
+        playerRb = target.GetComponent<Rigidbody2D>();
+
         target.OnChargerJump += OnChargerJump;
         target.OnJump += OnJump;
         gameObject.SetActive(false);
@@ -58,67 +61,83 @@ public class UIChargerJump : MonoBehaviour
         float chargePercent = currentCharge / maxCharge;
         int chevronsToShow = Mathf.CeilToInt(chargePercent * maxChevrons);
 
-        Vector3 mousePos = Input.mousePosition;
         Vector3 mouseWorldPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0;
+
         Vector3 playerPos = target.transform.position;
         Vector3 direction = (mouseWorldPos - playerPos).normalized;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        while (activeChevrons.Count < chevronsToShow)
+        // Velocidad inicial estimada del salto cargado
+        // Ajustá "jumpForce" al nombre real del campo en tu PlayerMovement.data
+        float jumpForce = Mathf.Lerp(
+            target.data.jumpForce,
+            target.data.maxImpulseForce,
+            chargePercent
+        );
+        Vector2 initialVelocity = direction * jumpForce;
+
+        // Gravedad real del rigidbody
+        float gravity = Physics2D.gravity.y * playerRb.gravityScale;
+
+        SyncChevronCount(chevronsToShow);
+        PlaceChevronAlongParabola(chevronsToShow, playerPos, initialVelocity, gravity, direction);
+    }
+
+    private void SyncChevronCount(int targetCount)
+    {
+        while (activeChevrons.Count < targetCount)
         {
             GameObject chevron = Instantiate(chevronPrefab, transform);
             activeChevrons.Add(chevron);
-
             originalScales.Add(chevron.transform.localScale);
         }
 
-        while (activeChevrons.Count > chevronsToShow)
+        while (activeChevrons.Count > targetCount)
         {
-            GameObject toRemove = activeChevrons[activeChevrons.Count - 1];
-            activeChevrons.RemoveAt(activeChevrons.Count - 1);
-            originalScales.RemoveAt(originalScales.Count - 1);
-            Destroy(toRemove);
+            int last = activeChevrons.Count - 1;
+            Destroy(activeChevrons[last]);
+            activeChevrons.RemoveAt(last);
+            originalScales.RemoveAt(last);
         }
+    }
 
-        for (int i = 0; i < activeChevrons.Count; i++)
+    private void PlaceChevronAlongParabola(int count, Vector3 origin, Vector2 initialVelocity, float gravity, Vector3 direction)
+    {
+        for (int i = 0; i < count; i++)
         {
+            float t = distanceFromPlayer + i * chevronSpacing;
+
+            // Posición parabólica: x = vx*t, y = vy*t + 0.5*g*t²
+            float x = origin.x + initialVelocity.x * t;
+            float y = origin.y + initialVelocity.y * t + 0.5f * gravity * t * t;
+            Vector3 worldPos = new(x, y, 0f);
+
+            // Tangente de la parábola para rotar el chevron correctamente
+            float vx = initialVelocity.x;
+            float vy = initialVelocity.y + gravity * t;
+            float angle = Mathf.Atan2(vy, vx) * Mathf.Rad2Deg;
+
             GameObject chevron = activeChevrons[i];
+            chevron.transform.position = worldPos;
+            chevron.transform.rotation = Quaternion.Euler(0f, 0f, angle);
 
-            float distance = distanceFromPlayer + (i * chevronSpacing);
-            Vector3 position = playerPos + direction * distance;
+            if (!chevron.TryGetComponent<SpriteRenderer>(out var sr)) continue;
 
-            chevron.transform.position = position;
-            chevron.transform.rotation = Quaternion.Euler(0, 0, angle);
+            float normalizedIndex = (float)i / maxChevrons;
+            Color color = sr.color;
+            color.a = fadeOutCurve.Evaluate(normalizedIndex);
+            sr.color = color;
 
-            if (chevron.TryGetComponent<SpriteRenderer>(out var sr))
-            {
-                float normalizedIndex = (float)i / maxChevrons;
-                float alpha = fadeOutCurve.Evaluate(normalizedIndex);
-                Color color = sr.color;
-                color.a = alpha;
-                sr.color = color;
-
-                float pulse = 1f + Mathf.Sin(Time.time * pulseSpeed + i * 0.2f) * pulseAmount;
-                Vector3 baseScale = originalScales[i];
-                float finalScale = Mathf.Lerp(1f, pulseMultiplier, (pulse - 1f) / pulseAmount);
-
-                if (direction.y > 0f)
-                    chevron.transform.localScale = mousePos.y > mouseWorldPos.y ? (baseScale * finalScale) : -(baseScale * finalScale);
-                else
-                    chevron.transform.localScale = mousePos.x > mouseWorldPos.x ? (baseScale * finalScale) : -(baseScale * finalScale);
-
-
-            }
+            float pulse = 1f + Mathf.Sin(Time.time * pulseSpeed + i * 0.2f) * pulseAmount;
+            float finalScale = Mathf.Lerp(1f, pulseMultiplier, (pulse - 1f) / pulseAmount);
+            chevron.transform.localScale = originalScales[i] * finalScale;
         }
     }
 
     public void OnJump(bool jump)
     {
-        if (jump)
-            OnJump();
-        else
-            OnLand();
+        if (jump) OnJump();
+        else OnLand();
 
         gameObject.SetActive(false);
         ClearChevrons();
@@ -127,8 +146,8 @@ public class UIChargerJump : MonoBehaviour
     public void OnJump()
     {
         targetScale = new Vector3(
-            originalScale.x * (1f - target.data.stretchAmount),  // Más delgado (80% ancho)
-            originalScale.y * (1f + target.data.stretchAmount),  // Más alto (120% alto)
+            originalScale.x * (1f - target.data.stretchAmount),
+            originalScale.y * (1f + target.data.stretchAmount),
             originalScale.z
         );
     }
@@ -136,8 +155,8 @@ public class UIChargerJump : MonoBehaviour
     public void OnLand()
     {
         targetScale = new Vector3(
-            originalScale.x * (1f + target.data.squashAmount),   // Más ancho (130%)
-            originalScale.y * (1f - target.data.squashAmount),   // Más bajo (70%)
+            originalScale.x * (1f + target.data.squashAmount),
+            originalScale.y * (1f - target.data.squashAmount),
             originalScale.z
         );
     }
@@ -145,10 +164,8 @@ public class UIChargerJump : MonoBehaviour
     private void ClearChevrons()
     {
         foreach (GameObject chevron in activeChevrons)
-        {
-            if (chevron != null)
-                Destroy(chevron);
-        }
+            if (chevron != null) Destroy(chevron);
+
         activeChevrons.Clear();
         originalScales.Clear();
     }

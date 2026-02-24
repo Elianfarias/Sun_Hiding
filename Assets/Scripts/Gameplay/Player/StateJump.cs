@@ -43,9 +43,9 @@ namespace Assets.Scripts.Gameplay.Player
                     playerController.SwapStateTo(PlayerAnimatorEnum.Idle);
             }
             else if (Input.GetKey(playerMovement.data.keyCodeLeft))
-                playerMovement.MoveX(-1f);
+                playerMovement.MoveX(-0.98f);
             else if (Input.GetKey(playerMovement.data.keyCodeRight))
-                playerMovement.MoveX(1f);
+                playerMovement.MoveX(0.98f);
 
             if (!onGround)
                 return;

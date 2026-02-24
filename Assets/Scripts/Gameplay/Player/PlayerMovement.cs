@@ -149,9 +149,9 @@ namespace Assets.Scripts.Gameplay.Player
 
         public void MoveX(float axisX)
         {
-            float newSpeed = data.speed > rb.velocityX ? data.speed : rb.velocityX;
+            float currentSpeedAbs = Mathf.Abs(rb.velocityX);
+            float newSpeed = Mathf.Max(data.speed, currentSpeedAbs);
             Vector2 movementSpeed = new(newSpeed * axisX, rb.velocityY);
-
             rb.velocity = movementSpeed;
         }
 
