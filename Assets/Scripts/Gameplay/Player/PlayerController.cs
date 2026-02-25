@@ -46,6 +46,9 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (GameStateManager.Instance.CurrentGameState == GameState.TUTORIAL)
+            return;
+
         currentState.Update();
     }
 

@@ -24,6 +24,9 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
+        if (GameStateManager.Instance.CurrentGameState == GameState.TUTORIAL)
+            return;
+
         if (Input.GetMouseButtonDown(0))
             TryFire();
 

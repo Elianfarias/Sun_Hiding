@@ -55,6 +55,9 @@ namespace Assets.Scripts.Gameplay.Player
 
         private void FixedUpdate()
         {
+            if (GameStateManager.Instance.CurrentGameState == GameState.TUTORIAL)
+                return;
+
             if (!_isDashing)
                 RotateTowardsMouseScreen();
 

@@ -5,7 +5,8 @@ public enum GameState
     MAIN_MENU,
     PLAYING,
     PAUSED,
-    GAME_OVER
+    GAME_OVER,
+    TUTORIAL
 }
 
 public class GameStateManager : MonoBehaviour
@@ -36,9 +37,11 @@ public class GameStateManager : MonoBehaviour
     public void SetGameState(GameState newState)
     {
         CurrentGameState = newState;
-
         switch (newState)
         {
+            case GameState.TUTORIAL:
+                AudioController.Instance.PlayBackgroundMusic();
+                break;
             case GameState.PLAYING:
                 AudioController.Instance.PlayBackgroundMusic();
                 break;
@@ -48,8 +51,7 @@ public class GameStateManager : MonoBehaviour
                 AudioController.Instance.StopBackgroundMusic();
                 HUDManager.Instance.ShowPanelPlayerLose();
                 Time.timeScale = 0;
-                break; 
-
+                break;
         }
     }
 }
