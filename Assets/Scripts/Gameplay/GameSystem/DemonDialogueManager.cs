@@ -32,6 +32,7 @@ public class DemonDialogueManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) Instance = this;
+
         demonObject.SetActive(false);
         dialoguePanel.SetActive(false);
         nextButton.onClick.AddListener(NextLine);
@@ -41,15 +42,18 @@ public class DemonDialogueManager : MonoBehaviour
     {
         _current = dialogue;
 
+        if (PlayerPrefs.GetInt(_current.name, 0) != 1)
+        {
             _lineIndex = 0;
             GameStateManager.Instance.SetGameState(GameState.TUTORIAL);
             AppearDemon(() => ShowLine(_lineIndex));
+        }
     }
 
     private void AppearDemon(System.Action onComplete)
     {
         demonObject.SetActive(true);
-        demonObject.transform.position = playerObject.transform.position + new Vector3(1f,0.5f,0);
+        demonObject.transform.position = playerObject.transform.position + new Vector3(1f, 0.5f, 0);
 
         // Sonido
         if (appearSound != null)
