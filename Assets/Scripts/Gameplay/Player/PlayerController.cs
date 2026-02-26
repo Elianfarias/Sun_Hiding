@@ -33,6 +33,9 @@ public class PlayerController : MonoBehaviour
         healthSystem.OnDie += HealthSystem_onDie;
         healthSystem.OnLifeUpdated += HealthSystem_onLifeUpdated;
         healthSystem.OnHealing += HealthSystem_onHealing;
+        InfectionSystem.Instance.OnInfectionMaxReached.AddListener(() =>
+            healthSystem.DoDamage(9999)
+        );
     }
 
     private void Start()
@@ -46,9 +49,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (GameStateManager.Instance.CurrentGameState == GameState.TUTORIAL)
-            return;
-
         currentState.Update();
     }
 

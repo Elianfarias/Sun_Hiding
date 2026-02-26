@@ -55,11 +55,14 @@ namespace Assets.Scripts.Gameplay.Player
 
         private void FixedUpdate()
         {
-            if (GameStateManager.Instance.CurrentGameState == GameState.TUTORIAL)
-                return;
-
             if (!_isDashing)
                 RotateTowardsMouseScreen();
+
+            if (GameStateManager.Instance.CurrentGameState == GameState.TUTORIAL)
+            {
+                rb.velocity = new Vector2(0, 0);
+                return;
+            }
 
             if (Input.GetKey(data.keyCodeDash))
                 TryDash();
