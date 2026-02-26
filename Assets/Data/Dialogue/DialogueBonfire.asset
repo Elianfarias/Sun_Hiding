@@ -10,10 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e57b696321a04294da8440a76b97fc9c, type: 3}
-  m_Name: TutorialJump
+  m_Name: DialogueBonfire
   m_EditorClassIdentifier: 
   lines:
-  - text: Hello warlock.
-  - text: As you know, the world has changed.
-  - text: "\rThe infection is spreading more and more."
-  - text: "\rHold down the space bar towards the mouse to evade it."
+  - text: You will find these campfires along the way.
+  - text: "\rStay close to them to purify the infection."

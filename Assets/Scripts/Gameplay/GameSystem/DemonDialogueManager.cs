@@ -6,6 +6,9 @@ public class DemonDialogueManager : MonoBehaviour
 {
     public static DemonDialogueManager Instance { get; private set; }
 
+    [Header("Player")]
+    [SerializeField] private GameObject playerObject;
+
     [Header("Demon")]
     [SerializeField] private GameObject demonObject;
     [SerializeField] private ParticleSystem appearVFX;
@@ -38,18 +41,15 @@ public class DemonDialogueManager : MonoBehaviour
     {
         _current = dialogue;
 
-        if (PlayerPrefs.GetInt(_current.name, 0) != 1)
-        {
             _lineIndex = 0;
             GameStateManager.Instance.SetGameState(GameState.TUTORIAL);
             AppearDemon(() => ShowLine(_lineIndex));
-        }
     }
 
     private void AppearDemon(System.Action onComplete)
     {
         demonObject.SetActive(true);
-        _demonOriginalPos = demonObject.transform.position;
+        demonObject.transform.position = playerObject.transform.position + new Vector3(1f,0.5f,0);
 
         // Sonido
         if (appearSound != null)
@@ -74,7 +74,7 @@ public class DemonDialogueManager : MonoBehaviour
     private void StartFloat()
     {
         LeanTween.cancel(demonObject);
-        LeanTween.moveY(demonObject, _demonOriginalPos.y + floatAmplitude, floatSpeed)
+        LeanTween.moveY(demonObject, playerObject.transform.position.y + floatAmplitude, floatSpeed)
             .setEase(LeanTweenType.easeInOutSine)
             .setLoopPingPong();
     }
