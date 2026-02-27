@@ -15,4 +15,5 @@ MonoBehaviour:
   speedMovement: 50
   damage: 20
   timeStun: 0.05
+  timeDie: 0.5
   timeMoveSound: 0

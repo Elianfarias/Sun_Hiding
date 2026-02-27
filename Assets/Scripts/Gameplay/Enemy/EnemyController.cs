@@ -70,7 +70,7 @@ public class EnemyController : MonoBehaviour
         enemyParticles.Play();
         enemyMovement.Die();
 
-        yield return new WaitForSeconds(data.TimeStun);
+        yield return new WaitForSeconds(data.TimeDie);
 
         soul.transform.position = transform.position + (Vector3.up * 0.2f);
         soul.SetActive(true);
@@ -98,6 +98,6 @@ public class EnemyController : MonoBehaviour
             return;
 
         soundEffectAudioSource.clip = audioClip;
-        soundEffectAudioSource.Play();
+        soundEffectAudioSource.PlayOneShot(audioClip);
     }
 }

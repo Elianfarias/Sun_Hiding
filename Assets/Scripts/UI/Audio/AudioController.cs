@@ -34,7 +34,8 @@ public class AudioController : MonoBehaviour
 
     public void PlayBackgroundMusic()
     {
-        BackgroundAudioSource.Play();
+        if(!BackgroundAudioSource.isActiveAndEnabled)
+            BackgroundAudioSource.Play();
     }
     
     public void PlayButtonClickSound()
