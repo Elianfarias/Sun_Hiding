@@ -42,12 +42,12 @@ public class DemonDialogueManager : MonoBehaviour
     {
         _current = dialogue;
 
-        //if (PlayerPrefs.GetInt(_current.name, 0) != 1)
-        //{
+        if (PlayerPrefs.GetInt(_current.name, 0) != 1)
+        {
             _lineIndex = 0;
             GameStateManager.Instance.SetGameState(GameState.TUTORIAL);
             AppearDemon(() => ShowLine(_lineIndex));
-        //}
+        }
     }
 
     private void AppearDemon(System.Action onComplete)
